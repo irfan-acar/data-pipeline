@@ -65,7 +65,6 @@ variable "lambda_stages" {
 }
 
 
-
 variable "git_org" {
   description = "Github organization for checking source code out directly - used with standard_source type = GITHUB"
   type        = string

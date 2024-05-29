@@ -21,7 +21,7 @@ resource "aws_codepipeline" "codepipeline" {
     content {
       name = "Source"
       dynamic "action" {
-        for_each = local.git_sources
+        for_each = stage.value.action
         content {
           name             = lookup(action.value, "name", "GithubV2Source")
           category         = "Source"
