@@ -58,6 +58,13 @@ variable "build_stages" {
   default     = null
 }
 
+variable "lambda_stages" {
+  description = "Predefined list of configured lambda stages"
+  type        = any
+  default     = null
+}
+
+
 
 variable "git_org" {
   description = "Github organization for checking source code out directly - used with standard_source type = GITHUB"
