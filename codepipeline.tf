@@ -1,9 +1,3 @@
-locals {
-  source_map  = { for i, source in var.standard_sources : tostring(i) => source }
-  git_keys    = compact([for i, source in local.source_map : source.type == "GITHUB" ? i : ""])
-  git_sources = [for key in local.git_keys : lookup(local.source_map, key)]
-}
-
 resource "aws_codepipeline" "codepipeline" {
   name          = var.pipeline_name
   role_arn      = aws_iam_role.codepipeline_role.arn
