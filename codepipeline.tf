@@ -5,8 +5,8 @@ locals {
 }
 
 resource "aws_codepipeline" "codepipeline" {
-  name     = var.pipeline_name
-  role_arn = aws_iam_role.codepipeline_role.arn
+  name          = var.pipeline_name
+  role_arn      = aws_iam_role.codepipeline_role.arn
   pipeline_type = "V2"
 
 
@@ -42,6 +42,29 @@ resource "aws_codepipeline" "codepipeline" {
     }
   }
 
+  ## Default Prebuilt Source Stages for GITHUBv2
+  dynamic "trigger" {
+    for_each = var.triggers
+
+    content {
+      provider_type = lookup(trigger.value, "provider_type", "CodeStarSourceConnection")
+      git_configuration {
+        source_action_name = lookup(trigger.value, "source_action_name", "GithubV2Source")
+        pull_request {
+          events = lookup(trigger.value, "events", [])
+          branches {
+            excludes = lookup(trigger.value, "excludes", [])
+            includes = lookup(trigger.value, "includes", [])
+          }
+
+        }
+
+      }
+    }
+  }
+
+
+
   ## Default Prebuilt CodebuildBuild Stage
   dynamic "stage" {
     for_each = var.build_stages
@@ -60,30 +83,6 @@ resource "aws_codepipeline" "codepipeline" {
           output_artifacts = [lookup(action.value, "artifact_name", "buildOutputArtifacts")]
           configuration = {
             ProjectName = action.value.project_name
-          }
-        }
-      }
-    }
-  }
-
-  ## Default Prebuilt AWS Lambda Stage
-  dynamic "stage" {
-    for_each = var.lambda_stages
-    content {
-      name = stage.value.lambda_name
-      dynamic "action" {
-        for_each = stage.value.action
-        content {
-          name             = lookup(action.value, "name", "default")
-          category         = lookup(action.value, "category", "Invoke")
-          owner            = lookup(action.value, "owner", "AWS")
-          provider         = lookup(action.value, "provider", "Lambda")
-          version          = lookup(action.value, "version", "1")
-          run_order        = lookup(action.value, "run_order", "1")
-          input_artifacts  = action.value.input_artifacts
-          output_artifacts = [lookup(action.value, "artifact_name", "buildOutputArtifacts")]
-          configuration = {
-            FunctionName = action.value.project_name
           }
         }
       }

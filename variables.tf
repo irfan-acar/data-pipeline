@@ -52,14 +52,14 @@ variable "standard_sources" {
   default     = null
 }
 
-variable "build_stages" {
-  description = "Predefined list of configured codebuild stages"
+variable "triggers" {
+  description = "Predefined list of triggers"
   type        = any
   default     = null
 }
 
-variable "lambda_stages" {
-  description = "Predefined list of configured lambda stages"
+variable "build_stages" {
+  description = "Predefined list of configured codebuild stages"
   type        = any
   default     = null
 }
@@ -73,6 +73,12 @@ variable "git_org" {
 
 variable "git_repo" {
   description = "Github repository for checking out source code directly - used with standard_source type = GITHUB"
+  type        = string
+  default     = ""
+}
+
+variable "provider_type" {
+  description = "Type of provider"
   type        = string
   default     = ""
 }
