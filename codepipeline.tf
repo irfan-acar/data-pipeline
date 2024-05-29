@@ -7,6 +7,7 @@ locals {
 resource "aws_codepipeline" "codepipeline" {
   name     = var.pipeline_name
   role_arn = aws_iam_role.codepipeline_role.arn
+  pipeline_type = "V2"
 
 
   artifact_store {
@@ -16,7 +17,7 @@ resource "aws_codepipeline" "codepipeline" {
 
   ## Default Prebuilt Source Stages for GITHUBv2
   dynamic "stage" {
-    for_each = var.standard_sources != null ? ["Source"] : []
+    for_each = var.standard_sources
     content {
       name = "Source"
       dynamic "action" {
